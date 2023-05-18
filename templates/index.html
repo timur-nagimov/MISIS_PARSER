@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scopus data for NUST MISIS</title>
+    <style>
+	  body { margin:0; padding:0; display:flex; justify-content:center; justify-items:center; }
+	  .block { width:915px; height:600px; }
+	  .block > div { overflow-y: scroll; overflow-x: hidden; }
+	  .block > div:nth-child(1) { width:250px; height:100%; padding: 5px 0; border: 1px solid black; float:left; }
+	  .block > div:nth-child(2) { width:650px; height:100%; padding: 5px; border: 1px solid black; float:right; }
+	  .block a { display:block; width:100%; padding: 5px; vertical-align:middle; color:#000; text-decoration:none; }
+	  .block a:hover { background-color:#CCC8; }
+	  .block a.selected { background-color:#FC02; }
+	  .block a span { display:block; }
+	  .block a span:nth-child(1) { font-weight:bold; }
+	  .scidata { border-bottom: 1px solid black; padding: 3px; }
+	  .scidata p, .scidata ul { margin: 0.5em 0; }
+	  img { width:40px; height:40px; }
+    </style>
+</head>
+<body>
+    <div class="block">
+		<div>
+			{% for i in sci %}
+			<a class="{{ 'selected' if sci[i]['selected'] else '' }}" href="/?sci-info={{ sci[i]['id'] }}">
+				<span>{{ sci[i]['full_name'] }}</span>
+				<span>({{ sci[i]['scopus_id'] }})</span>
+			</a>
+			{% endfor %}
+		</div>
+		<div>
+			{% if scidata %}
+				{% for d in scidata %}
+				<div class="scidata">
+					<h3>{{ d['pubname'] }}</h3>
+					<p>Сведения по SCImago Journal Rank (index, url):</p>
+					<ul>
+						{% if d['scimago'] %}
+							{% for scimago in d['scimago'] %}
+								<li>Индекс: {{ scimago['indx'] }} // <img src="{{ scimago['link'] }}"></li>
+							{% endfor %}
+						{% else %}
+							<li>данные не обнаружены</li>
+						{% endif %}
+					</ul>
+					<p>Данные из журнала:</p>
+					<ul>
+						{% if d['journal'] %}
+							{% for journal in d['journal'] %}
+								<li><b>{{ journal['key'] }}:</b> {{ journal['value'] }}</li>
+							{% endfor %}
+						{% else %}
+							<li>данные не обнаружены</li>
+						{% endif %}
+					</ul>
+				</div>
+				{% endfor %}
+			{% else %}
+				<h3>Информация не найдена или преподаватель не выбран.</h3>
+				<h3>Для просмотра информации о преподавателе выберите его в меню слева</h3>
+			{% endif %}
+		</div>
+    </div>
+
+</body>
+</html>
