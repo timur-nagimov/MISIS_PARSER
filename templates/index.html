@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Scopus data for NUST MISIS</title>
     <style>
-	  body { margin:0; padding:0; display:flex; justify-content:center; justify-items:center; }
+	  body { margin:0; padding:0; display:flex; flex-direction: column; justify-content:center; justify-items:center; }
 	  .block { width:915px; height:600px; }
 	  .block > div { overflow-y: scroll; overflow-x: hidden; }
 	  .block > div:nth-child(1) { width:250px; height:100%; padding: 5px 0; border: 1px solid black; float:left; }
 	  .block > div:nth-child(2) { width:650px; height:100%; padding: 5px; border: 1px solid black; float:right; }
-	  .block a { display:block; width:100%; padding: 5px; vertical-align:middle; color:#000; text-decoration:none; }
+	  .block a { display:inline-block; width:80%; padding: 5px; vertical-align:middle; color:#000; text-decoration:none; }
+      .block a:nth-child(2n) { width:5%; color:#F33; }
 	  .block a:hover { background-color:#CCC8; }
 	  .block a.selected { background-color:#FC02; }
 	  .block a span { display:block; }
@@ -18,9 +19,19 @@
 	  .scidata { border-bottom: 1px solid black; padding: 3px; }
 	  .scidata p, .scidata ul { margin: 0.5em 0; }
 	  img { width:40px; height:40px; }
+      .header { display:flex; justify-content:center; width:915px; height:30px; }
+      .header input[type=text] { width: 400px; }
+      .header input[type=number] { width: 300px; }
+      .header button { width:200px; padding:5px; text-align:center; background-color:#CCC; }
+      .header button:hover { color:#AAF; background-color:#666; }
     </style>
 </head>
 <body>
+    <form onsubmit="return addScientist();" class="header">
+        <input id="namesci" name="namesci" type="text" placeholder="Введите ФИО преподавателя"></input>
+        <input id="idsci" name="idsci" type="number" placeholder="Введите ID преподавателя"></input>
+        <button id="addsci" type="submit">Добавить</button>
+    </form>
     <div class="block">
 		<div>
 			{% for i in sci %}
@@ -28,6 +39,7 @@
 				<span>{{ sci[i]['full_name'] }}</span>
 				<span>({{ sci[i]['scopus_id'] }})</span>
 			</a>
+            <a href="/del?idsci={{ sci[i]['scopus_id'] }}&namesci={{ sci[i]['full_name'] }}">X</a>
 			{% endfor %}
 		</div>
 		<div>
@@ -63,6 +75,21 @@
 			{% endif %}
 		</div>
     </div>
-
+    <script>
+        const sb = document.getElementById("addsci");
+        const sid = document.getElementById("idsci");
+        const sname = document.getElementById("namesci");
+        function addScientist() {
+            sb.disabled = true;
+            let url = "/add?idsci=" + encodeURIComponent(sid.value) + "&namesci=" + encodeURIComponent(sname.value);
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.send();
+            xhr.onload = function() {
+                window.location.reload();
+            };
+            return false;
+        }
+    </script>
 </body>
 </html>
